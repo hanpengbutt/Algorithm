@@ -1,19 +1,28 @@
+from collections import deque
+
 N = int(input())
-INF = int(1e9)
-dp = [INF] * (N + 1)
+visited = [0] * (N + 1)
+vector = [
+    lambda X: int(X / 3) if X % 3 == 0 else -1,
+    lambda X: int(X / 2) if X % 2 == 0 else -1,
+    lambda X: X - 1,
+]
+
 
 def solution():
-    dp[1] = 0
-    for i in range(2, N + 1):
-        compare = [dp[i - 1] + 1]
-        if i % 3 == 0:
-            compare.append(dp[int(i / 3)] + 1)
-        if i % 2 == 0:
-            compare.append(dp[int(i / 2)] + 1) 
-        
-        dp[i] = min(compare)
+    q = deque()
+    q.append(N)
+    visited[N] = 1
 
-    print(dp[N])
+    while not visited[1]:
+        now = q.popleft()
+        for f in vector:
+            next = f(now)
+            if -1 < next < N + 1 and not visited[next]:
+                q.append(next)
+                visited[next] = visited[now] + 1
+
+    print(visited[1] - 1)
 
 
 solution()
