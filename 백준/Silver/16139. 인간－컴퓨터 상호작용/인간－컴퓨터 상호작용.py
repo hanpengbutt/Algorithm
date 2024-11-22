@@ -1,3 +1,7 @@
+import sys
+
+input = sys.stdin.readline
+
 S = input()
 q = int(input())
 dict = {}
