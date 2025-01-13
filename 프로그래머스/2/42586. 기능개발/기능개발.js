@@ -9,21 +9,16 @@ function solution(progresses, speeds) {
     days[i] = Math.ceil((100 - progresses[i]) / speeds[i]);
   }
 
-  let max = 0
   for (let i = 0; i < N; i++) {
-    while (stack.length && stack[stack.length - 1] <= Math.max(days[i], max)) {
-      stack.pop();
-    }
-
     if (stack.length === 0) {
-      result[i] = Math.max(days[i], max);
+      result[i] = days[i];
+      stack.push(days[i]);
     } else {
+      if(days[i] > stack[stack.length - 1]) {
+        stack.push(days[i])
+      }
       result[i] = stack[stack.length - 1];
     }
-
-    if(result[i] > max) max = result[i]
-
-    stack.push(days[i]);
   }
 
   let now = result[0];
