@@ -1,83 +1,104 @@
 class Node {
   constructor(value) {
-    this.value = value; // 존재 여부('O', 'X')
-    this.prev = null; // 이전 노드의 인덱스
-    this.next = null; // 디음 노드의 인덱스
+    this.value = value;
+    this.prev = null;
+    this.next = null;
+  }
+}
+
+class LinkedList {
+  constructor() {
+    this.head = null;
+    this.tail = null;
+  }
+
+  append(value) {
+    const node = new Node(value);
+    if (this.head !== null) {
+      this.tail.next = node;
+      node.prev = this.tail;
+    } else {
+      this.head = node;
+    }
+    this.tail = node;
+  }
+
+  getValues() {
+    const values = [];
+    let nowNode = this.head;
+    while (nowNode !== null) {
+      values.push(nowNode.value);
+      nowNode = nowNode.next;
+    }
+
+    return values;
   }
 }
 
 function solution(n, k, cmd) {
-  const table = new Array(n).fill(0).map((_, i) => new Node('O'));
-  for (let i = 0; i < n; i++) {
-    if (i > 0) {
-      table[i].prev = i - 1;
-    }
-    if (i < n - 1) {
-      table[i].next = i + 1;
-    }
-  }
+  const linkedList = new LinkedList();
   const stack = [];
 
-  let nowIdx = k; // 현재 인덱스
-  let prevIdx, nextIdx, restoreIdx;
-  let nowNode, restoreNode;
+  for (let i = 0; i < n; i++) {
+    linkedList.append(i);
+  }
+
+  let nowNode = linkedList.head;
+  let prevNode, nextNode, restoreNode;
+  for (let i = 0; i < k; i++) {
+    nowNode = nowNode.next;
+  }
+
   for (let i = 0; i < cmd.length; i++) {
     const [c, x] = cmd[i].split(' ');
 
     switch (c) {
-      case 'D':
-        for (let j = 0; j < x; j++) {
-          nowIdx = table[nowIdx].next;
-        }
-        break;
       case 'U':
         for (let j = 0; j < x; j++) {
-          nowIdx = table[nowIdx].prev;
+          nowNode = nowNode.prev;
+        }
+        break;
+      case 'D':
+        for (let j = 0; j < x; j++) {
+          nowNode = nowNode.next;
         }
         break;
       case 'C':
-        stack.push(nowIdx);
-        nowNode = table[nowIdx];
-        nowNode.value = 'X';
-
-        prevIdx = nowNode.prev;
-        nextIdx = nowNode.next;
-
-        nowIdx = nextIdx ? nextIdx : prevIdx;
-
-        if (prevIdx !== null) {
-          table[prevIdx].next = nextIdx;
+        stack.push(nowNode);
+        prevNode = nowNode.prev;
+        nextNode = nowNode.next;
+        if (prevNode !== null) {
+          prevNode.next = nextNode;
+        } else {
+          linkedList.head = nextNode;
         }
-        if (nextIdx !== null) {
-          table[nextIdx].prev = prevIdx;
+        if (nextNode !== null) {
+          nextNode.prev = prevNode;
+        } else {
+          linkedList.tail = prevNode;
         }
-
+        nowNode = nextNode ? nextNode : prevNode;
         break;
       case 'Z':
-        restoreIdx = stack.pop();
-        restoreNode = table[restoreIdx]
-        restoreNode.value = 'O';
-
-        prevIdx = restoreNode.prev;
-        while (prevIdx !== null && table[prevIdx].value === 'X') {
-          prevIdx = table[prevIdx].prev;
+        restoreNode = stack.pop();
+        prevNode = restoreNode.prev;
+        nextNode = restoreNode.next;
+        if (prevNode !== null) {
+          prevNode.next = restoreNode;
+        } else {
+          linkedList.head = restoreNode;
         }
-        if (prevIdx !== null) {
-          table[prevIdx].next = restoreIdx;
+        if (nextNode !== null) {
+          nextNode.prev = restoreNode;
+        } else {
+          linkedList.tail = restoreNode;
         }
-        restoreNode.prev = prevIdx;
-
-        nextIdx = restoreNode.next;
-        while (nextIdx !== null && table[nextIdx].value === 'X') {
-          nextIdx = table[nextIdx].next;
-        }
-        if (nextIdx !== null) {
-          table[nextIdx].prev = restoreIdx;
-        }
-        restoreNode.next = nextIdx;
         break;
     }
   }
 
-  return table.map((node) => node.value).join('');
+  const result = new Array(n).fill('X');
+  linkedList.getValues().forEach((i) => (result[i] = 'O'));
+
+  return result.join('');
 }
