@@ -3,18 +3,19 @@ let [N, ...chat] = fs.readFileSync(0, 'utf8').trim().split('\n');
 N = +N;
 
 function solution(N, chat) {
+  let map = new Map();
   let count = 0;
-  let counts = {};
-  for (let i = 0; i < N; i++) {
-    if (chat[i] === 'ENTER') {
-      counts = {};
+
+  chat.forEach((c) => {
+    if (c === 'ENTER') {
+      map = new Map();
     } else {
-      if (counts[chat[i]] !== 1) {
-        counts[chat[i]] = 1;
-        count += 1;
+      if (!map.get(c)) {
+        map.set(c, true);
+        count++;
       }
     }
-  }
+  });
 
   return count;
 }
