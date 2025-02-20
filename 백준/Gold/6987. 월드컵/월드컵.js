@@ -5,13 +5,40 @@ function solution(input) {
   let result = [];
 
   function isPossible(matchResult) {
+    let currentResult = new Array(6).fill(0).map(() => new Array(3).fill(0));
     let possible = false;
 
-    function match(idx, currentResult) {
+    function increase(result, own, opp) {
+      if (result === 'win') {
+        currentResult[own][0] += 1;
+        currentResult[opp][2] += 1;
+      } else if (result === 'draw') {
+        currentResult[own][1] += 1;
+        currentResult[opp][1] += 1;
+      } else {
+        currentResult[own][2] += 1;
+        currentResult[opp][0] += 1;
+      }
+    }
+
+    function decrease(result, own, opp) {
+      if (result === 'win') {
+        currentResult[own][0] -= 1;
+        currentResult[opp][2] -= 1;
+      } else if (result === 'draw') {
+        currentResult[own][1] -= 1;
+        currentResult[opp][1] -= 1;
+      } else {
+        currentResult[own][2] -= 1;
+        currentResult[opp][0] -= 1;
+      }
+    }
+
+    function match(idx) {
       if (possible) {
         return;
       }
-      
+
       if (idx === 5) {
         for (let i = 0; i < 3; i++) {
           if (matchResult[0][i] !== currentResult[0][i]) {
@@ -60,101 +87,73 @@ function solution(input) {
 
       if (idx < 5) {
         // A 나라 경기
-        const win = currentResult.map((c) => [...c]);
-        const draw = currentResult.map((c) => [...c]);
-        const fail = currentResult.map((c) => [...c]);
+        increase('win', 0, idx + 1);
+        match(idx + 1);
+        decrease('win', 0, idx + 1);
 
-        win[0][0] += 1;
-        win[idx + 1][2] += 1;
+        increase('draw', 0, idx + 1);
+        match(idx + 1);
+        decrease('draw', 0, idx + 1);
 
-        draw[0][1] += 1;
-        draw[idx + 1][1] += 1;
-
-        fail[0][2] += 1;
-        fail[idx + 1][0] += 1;
-
-        match(idx + 1, win);
-        match(idx + 1, draw);
-        match(idx + 1, fail);
+        increase('fail', 0, idx + 1);
+        match(idx + 1);
+        decrease('fail', 0, idx + 1);
       } else if (idx < 9) {
         // B 나라 경기
-        const win = currentResult.map((c) => [...c]);
-        const draw = currentResult.map((c) => [...c]);
-        const fail = currentResult.map((c) => [...c]);
+        increase('win', 1, idx - 3);
+        match(idx + 1);
+        decrease('win', 1, idx - 3);
 
-        win[1][0] += 1;
-        win[idx - 3][2] += 1;
+        increase('draw', 1, idx - 3);
+        match(idx + 1);
+        decrease('draw', 1, idx - 3);
 
-        draw[1][1] += 1;
-        draw[idx - 3][1] += 1;
-
-        fail[1][2] += 1;
-        fail[idx - 3][0] += 1;
-
-        match(idx + 1, win);
-        match(idx + 1, draw);
-        match(idx + 1, fail);
+        increase('fail', 1, idx - 3);
+        match(idx + 1);
+        decrease('fail', 1, idx - 3);
       } else if (idx < 12) {
         // C 나라 경기
-        const win = currentResult.map((c) => [...c]);
-        const draw = currentResult.map((c) => [...c]);
-        const fail = currentResult.map((c) => [...c]);
+        increase('win', 2, idx - 6);
+        match(idx + 1);
+        decrease('win', 2, idx - 6);
 
-        win[2][0] += 1;
-        win[idx - 6][2] += 1;
+        increase('draw', 2, idx - 6);
+        match(idx + 1);
+        decrease('draw', 2, idx - 6);
 
-        draw[2][1] += 1;
-        draw[idx - 6][1] += 1;
-
-        fail[2][2] += 1;
-        fail[idx - 6][0] += 1;
-
-        match(idx + 1, win);
-        match(idx + 1, draw);
-        match(idx + 1, fail);
+        increase('fail', 2, idx - 6);
+        match(idx + 1);
+        decrease('fail', 2, idx - 6);
       } else if (idx < 14) {
         // D 나라 경기
-        const win = currentResult.map((c) => [...c]);
-        const draw = currentResult.map((c) => [...c]);
-        const fail = currentResult.map((c) => [...c]);
+        increase('win', 3, idx - 8);
+        match(idx + 1);
+        decrease('win', 3, idx - 8);
 
-        win[3][0] += 1;
-        win[idx - 8][2] += 1;
+        increase('draw', 3, idx - 8);
+        match(idx + 1);
+        decrease('draw', 3, idx - 8);
 
-        draw[3][1] += 1;
-        draw[idx - 8][1] += 1;
-
-        fail[3][2] += 1;
-        fail[idx - 8][0] += 1;
-
-        match(idx + 1, win);
-        match(idx + 1, draw);
-        match(idx + 1, fail);
+        increase('fail', 3, idx - 8);
+        match(idx + 1);
+        decrease('fail', 3, idx - 8);
       } else {
         // E 나라 경기
-        const win = currentResult.map((c) => [...c]);
-        const draw = currentResult.map((c) => [...c]);
-        const fail = currentResult.map((c) => [...c]);
+        increase('win', 4, idx - 9);
+        match(idx + 1);
+        decrease('win', 4, idx - 9);
 
-        win[4][0] += 1;
-        win[idx - 9][2] += 1;
+        increase('draw', 4, idx - 9);
+        match(idx + 1);
+        decrease('draw', 4, idx - 9);
 
-        draw[4][1] += 1;
-        draw[idx - 9][1] += 1;
-
-        fail[4][2] += 1;
-        fail[idx - 9][0] += 1;
-
-        match(idx + 1, win);
-        match(idx + 1, draw);
-        match(idx + 1, fail);
+        increase('fail', 4, idx - 9);
+        match(idx + 1);
+        decrease('fail', 4, idx - 9);
       }
     }
 
-    match(
-      0,
-      new Array(6).fill(0).map(() => new Array(3).fill(0))
-    );
+    match(0);
 
     return possible;
   }
