@@ -1,32 +1,25 @@
 let fs = require('fs');
-let input = fs.readFileSync(0, 'utf-8').trim().split('\n').slice(1);
+let [T, ...input] = fs.readFileSync(0, 'utf8').trim().split('\n');
 
-const solution = (input) => {
-    const result = [];
+T = +T;
+input = input.map((v) => +v);
 
-    const getPermutation = (arr, r) => {
-        const answer = [];
-        if(r === 1) return arr.map((e) => [e]);
-        
-        arr.forEach((fixed, idx, origin) => {
-            answer.push(...getPermutation(arr, r - 1).map((p) => [fixed, ...p]))
-        });
-        
-        return answer;
-    }
-    
-    input.forEach((n) => {
-        let answer = 1;
-        if(n === 2 || n === 3) answer++;
-        
-        const arr = [1, 2, 3];
-        for(let i = 2; i < n; i++) {
-            answer += getPermutation(arr, i).filter((p) => p.reduce((acc, cur) => acc += cur, 0) === n).length
-        }
-        result.push(answer);
-    });
-    
-    return result.join('\n').trimEnd();
-};
+function solution(T, input) {
+  const result = [];
+  const dp = new Array(11).fill(0);
+  dp[0] = 1;
 
-console.log(solution(input.map((v) => +v)));
+  for (let i = 1; i < 11; i++) {
+    dp[i] += dp[i - 1];
+    if (i - 2 > -1) dp[i] += dp[i - 2];
+    if (i - 3 > -1) dp[i] += dp[i - 3];
+  }
+
+  for (let i = 0; i < T; i++) {
+    result.push(dp[input[i]]);
+  }
+
+  return result.join('\n').trim();
+}
+
+console.log(solution(T, input));
