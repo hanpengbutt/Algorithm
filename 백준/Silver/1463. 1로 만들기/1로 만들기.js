@@ -2,16 +2,28 @@ let fs = require('fs');
 let N = +fs.readFileSync(0, 'utf8').trim();
 
 function solution(N) {
-  const dp = new Array(N + 1).fill(0);
+  const q = [];
+  const visited = new BigUint64Array(N + 1).fill(0n);
+  q.push(N);
+  visited[N] = 1n;
 
-  for (let i = 2; i < N + 1; i++) {
-    let min = dp[i - 1];
-    if (i % 2 === 0 && dp[i / 2] < min) min = dp[i / 2];
-    if (i % 3 === 0 && dp[i / 3] < min) min = dp[i / 3];
-    dp[i] = min + 1;
+  while (!visited[1]) {
+    const now = q.shift();
+    if (now % 3 === 0 && !visited[now / 3]) {
+      visited[now / 3] = visited[now] + 1n;
+      q.push(now / 3);
+    }
+    if (now % 2 === 0 && !visited[now / 2]) {
+      visited[now / 2] = visited[now] + 1n;
+      q.push(now / 2);
+    }
+    if (!visited[now - 1]) {
+      visited[now - 1] = visited[now] + 1n;
+      q.push(now - 1);
+    }
   }
 
-  return dp[N]
+  return Number(visited[1]) - 1;
 }
 
 console.log(solution(N));
