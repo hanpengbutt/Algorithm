@@ -11,16 +11,16 @@ function solution(N, s) {
   let count = 1;
 
   while (right < N) {
-    if (slected.length < 2) {
-      // 선택된 과일 종류가 2개보다 작은 경우, 다음 과일 선택
+    if (slected.length <= 2) {
+      // 선택된 과일 종류가 2개보다 작거나 같은 경우, 다음 과일 선택
       if (count > result) result = count;
       right += 1;
       if (!slected.includes(s[right])) {
         slected.push(s[right]);
       }
       count += 1;
-    } else if (slected.length > 2) {
-      // 선택된 과일 종류가 2개보다 큰 경우
+    } else  {
+      // 선택된 과일 종류가 2개보다 큰 경우, 이전 과일 선택 해제
       slected = [s[right], s[right - 1]];
       left = right - 1;
       count = 2;
@@ -28,14 +28,6 @@ function solution(N, s) {
         left -= 1;
         count += 1;
       }
-    } else {
-      // 선택된 과일 종류가 2개인 경우
-      if (count > result) result = count;
-      right += 1;
-      if (!slected.includes(s[right])) {
-        slected.push(s[right]);
-      }
-      count += 1;
     }
   }
 
