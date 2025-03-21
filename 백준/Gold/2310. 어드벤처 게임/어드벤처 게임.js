@@ -1,65 +1,66 @@
 let fs = require('fs');
 let input = fs.readFileSync(0, 'utf8').trim().split('\n');
 
+
 function solution(N, rooms) {
-  let result = 'No'
   const graph = new Array(N + 1).fill(0).map(() => []);
 
-  rooms.forEach((room, idx) => {
-    const connectCount = room.length - 3;
-    for (let i = 0; i < connectCount; i++) {
-      graph[idx + 1].push(room[2 + i]);
+  rooms.forEach((room, i) => {
+    for (let j = 2; j < room.length - 1; j++) {
+      graph[i + 1].push(room[j]);
     }
   });
 
-  let visited = Array(graph.length).fill(0);
-  let paths = [];
+  const paths = [];
+  const visited = new Array(N + 1).fill(0);
 
-  function dfs(now, path) {
-    visited[now] = 1;
-    path.push(now);
+  function dfs(node, path) {
+    visited[node] = 1;
+    path.push(node);
 
-    if (now === N) {
-      paths.push([...path]);
-    }
+    if (node === N) paths.push([...path]);
 
-    for (let i = 0; i < graph[now].length; i++) {
-      let next = graph[now][i];
-      if (!visited[next]) {
-        dfs(next, path);
-      }
+    for (let i = 0; i < graph[node].length; i++) {
+      const next = graph[node][i];
+      if (!visited[next]) dfs(next, path);
     }
 
     path.pop();
-    visited[now] = 0;
+    visited[node] = 0;
   }
 
   dfs(1, []);
 
+  function getMoney(money, room) {
+    switch (rooms[room][0]) {
+      case 'E':
+        break;
+      case 'L':
+        money = money < rooms[room][1] ? rooms[room][1] : money;
+        break;
+      case 'T':
+        money -= rooms[room][1];
+        break;
+    }
+
+    return money;
+  }
+
   for (let i = 0; i < paths.length; i++) {
-    const path = paths[i];
     let money = 0;
+    const path = paths[i];
     for (let j = 0; j < path.length; j++) {
-      const num = path[j];
-      switch (rooms[num - 1][0]) {
-        case 'E':
-          break;
-        case 'L':
-          if (money < rooms[num - 1][1]) money = rooms[num - 1][1];
-          break;
-        case 'T':
-          money -= rooms[num - 1][1];
-      }
+      const room = path[j];
+      money = getMoney(money, room - 1);
       if (money < 0) break;
     }
 
-    if (money >= 0) {
-      result = 'Yes'
-      break
+    if(money >=0) {
+        return 'Yes'
     }
   }
 
-  return result
+  return 'No'
 }
 
 let i = 0;
@@ -69,9 +70,9 @@ while (1) {
 
   const rooms = input
     .slice(i + 1, i + N + 1)
-    .map((room) => room.split(' ').map((v, i) => (i === 0 ? v : +v)));
-
-  i += N + 1;
+    .map((room) => room.split(' ').map((v, idx) => (idx === 0 ? v : +v)));
 
   console.log(solution(N, rooms));
+
+  i = i + N + 1;
 }
