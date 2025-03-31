@@ -8,7 +8,7 @@ function solution(M, N) {
   for (let i = 2; i * i <= N; i++) {
     if (nums[i]) {
       for (let j = i * i; j <= N; j += i) {
-        nums[j] = false;
+        nums[j] = 0;
       }
     }
   }
