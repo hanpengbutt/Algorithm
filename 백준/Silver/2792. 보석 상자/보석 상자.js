@@ -5,24 +5,36 @@ const [N, M] = input[0].split(' ').map(Number);
 const jewels = input.slice(1).map(Number);
 
 function solution(N, M, jewels) {
+  function isPossible(n) {
+    let count = 0;
+    for (let i = 0; i < jewels.length; i++) {
+      count += Math.ceil(jewels[i] / n);
+    }
+
+    if (count <= N) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  jewels.sort((a, b) => b - a);
+  let result = 0;
+
   let left = 1;
-  let right = Math.max(...jewels);
-  let mid = Math.floor(left + (right - left) / 2);
+  let right = jewels[0];
 
   while (left <= right) {
-    const studentCount = jewels
-      .map((count) => Math.ceil(count / mid))
-      .reduce((acc, cur) => (acc += cur));
+    let mid = ~~((left + right) / 2);
 
-    if (studentCount <= N) {
+    if (isPossible(mid)) {
+      result = mid;
       right = mid - 1;
     } else {
       left = mid + 1;
     }
-    mid = Math.floor(left + (right - left) / 2);
   }
-
-  return left;
+  return result;
 }
 
 console.log(solution(N, M, jewels));
