@@ -7,31 +7,47 @@ const intervals = input
   .map((interval) => interval.split(' ').map(Number));
 
 function solution(N, M, A, B, intervals) {
-  const dp = new Array(N + 1).fill(0);
-  for (let i = 0; i < M; i++) {
-    const [start, end] = intervals[i];
-    for (let j = start; j <= end; j++) {
-      dp[j] = -1;
+  let result = [];
+
+  function bfs(node) {
+    const visited = new Array(N + 1).fill(0);
+    for (let i = 0; i < M; i++) {
+      const [start, end] = intervals[i];
+      for (let j = start; j <= end; j++) {
+        visited[j] = -1;
+      }
     }
+
+    if (visited[node] === -1) return 0;
+
+    visited[node] = 1;
+    const q = [node];
+    let idx = 0
+
+    while (idx <= q.length && !visited[N]) {
+      const now = q[idx]
+      idx += 1
+
+      let next = now + A;
+      if (next <= N && visited[next] === 0) {
+        visited[next] = visited[now] + 1;
+        q.push(next);
+      }
+      next = now + B;
+      if (next <= N && visited[next] === 0) {
+        visited[next] = visited[now] + 1;
+        q.push(next);
+      }
+    }
+    return visited[N];
   }
 
-  if(dp[A] !== -1) dp[A] = 1
-  if(dp[B] !== -1) dp[B] = 1
+  let count = bfs(A);
+  if (count) result.push(count);
+  count = bfs(B);
+  if (count) result.push(count);
 
-  for (let i = 1; i <= N; i++) {
-    if (dp[i] === 0) {
-      const options = [];
-      if (i - A > 0 && dp[i - A] > 0) {
-        options.push(dp[i - A]);
-      }
-      if (i - B > 0 && dp[i - B] > 0) {
-        options.push(dp[i - B]);
-      }
-      if(options.length) dp[i] = Math.min(...options) + 1
-    }
-  }
-
-  return dp[N] ? dp[N] : -1
+  return result.length ? Math.min(...result) : -1;
 }
 
 console.log(solution(N, M, A, B, intervals));
