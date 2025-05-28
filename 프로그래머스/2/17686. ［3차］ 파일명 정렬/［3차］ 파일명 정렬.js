@@ -2,7 +2,7 @@ function solution(files) {
   const regExp = /^(\D+)(\d{1,5})(.*)$/;
     
   files = files.map((file) => {
-      const [_, head, number, tail] = regExp.exec(file);
+      const [_, head, number, tail] = file.match(regExp);
       return [head, number, tail];
   })
 
