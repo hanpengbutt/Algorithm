@@ -5,10 +5,7 @@ function solution(m, n, board) {
     
     function bomb() {
         let bombCount = 0;
-        let newBoard = [];
-        board.forEach((row) => {
-            newBoard.push([...row]);
-        });
+        let newBoard = board.map((row) => [...row]);
             
         for(let row = 0; row < m - 1; row += 1) {
             for(let col = 0; col < n - 1; col += 1) {
