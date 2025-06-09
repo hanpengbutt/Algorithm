@@ -9,9 +9,9 @@ function solution(expression) {
             for(let k = 0; k < 3; k++) {
                 if(i !== j && j !== k && k !== i) {
                     let expression = origin;
-                    expression = addPair(expression, op[i]);
-                    expression = addPair(expression, op[j]);
-                    expression = addPair(expression, op[k]);
+                    expression = calc(expression, op[i]);
+                    expression = calc(expression, op[j]);
+                    expression = calc(expression, op[k]);
                     let result = Math.abs(expression[0])
                     if(result > maxResult) maxResult = result;
                 }
@@ -19,7 +19,7 @@ function solution(expression) {
         }
     }
     
-    function addPair(expression, op) {
+    function calc(expression, op) {
         const stack = [];
         let flag = 1
         for(let i = 0; i < expression.length; i++) {
