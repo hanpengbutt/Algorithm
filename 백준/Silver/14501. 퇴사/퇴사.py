@@ -1,26 +1,19 @@
-import sys
-
-input = sys.stdin.readline
-
 N = int(input())
-reservation = [list(map(int, input().split())) for _ in range(N)]
+meetings = []
 
+for i in range(N):
+    [during, value] = list(map(int, input().split()))
+    if i + during <= N:
+        meetings.append([i + 1, i + during, value])
 
-def solution():
-    dp = {0:0}
-    for i in range(N):
-        T, P = reservation[i]
-        l = []
-        if i + T <= N:
-            for time in sorted(dp.keys(), reverse=True):
-                if time <= i:
-                    l.append(dp[time])
+meetings.sort(key=lambda meeting: meeting[1])
 
-            if not i + T in dp.keys():
-                dp[i + T] = (max(l) if l else 0) + P
-            else:
-                dp[i + T] = max((max(l) if l else 0) + P, dp[i + T])
+dp = [[0 for _ in range(N + 1)] for _ in range(len(meetings) + 1)]
 
-    print(max(dp.values()))
+for i in range(1, len(meetings) + 1):
+    [start, end, value] = meetings[i - 1]
+    m = max(dp[i - 1][end], dp[i - 1][start - 1] + value)
+    for j in range(1, N + 1):
+        dp[i][j] = dp[i - 1][j] if j < end else m
 
-solution()
+print(dp[len(meetings)][N])
