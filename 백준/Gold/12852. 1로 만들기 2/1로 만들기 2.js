@@ -1,36 +1,46 @@
-let fs = require('fs');
-let N = +fs.readFileSync(0, 'utf8').trim();
+const fs = require('fs');
+const N = +fs.readFileSync(0, 'utf8').trim();
 
 function solution(N) {
-  const dp = new Array(N + 1).fill(new Array());
+  if (N === 1) return '0\n1';
+  
+  const dp = new Array(N + 1).fill(0).map(() => [0, 0]);
+  let nows = [N];
 
-  for (let i = 1; i < N + 1; i++) {
-    let len = Infinity;
-    let calc;
+  while (!dp[1][0]) {
+    const newNows = [];
+    nows.forEach((now) => {
+      const nowCount = dp[now][0];
 
-    if (i % 3 === 0) {
-      if (dp[i / 3].length + 1 < len) {
-        len = dp[i / 3].length + 1;
-        calc = [i, ...dp[i / 3]];
+      if (!(now % 3) && !dp[now / 3][0]) {
+        newNows.push(now / 3);
+        dp[now / 3][0] = nowCount + 1;
+        dp[now / 3][1] = now;
       }
-    }
 
-    if (i % 2 === 0) {
-      if (dp[i / 2].length + 1 < len) {
-        len = dp[i / 2].length + 1;
-        calc = [i, ...dp[i / 2]];
+      if (!(now % 2) && !dp[now / 2][0]) {
+        newNows.push(now / 2);
+        dp[now / 2][0] = nowCount + 1;
+        dp[now / 2][1] = now;
       }
-    }
 
-    if (dp[i - 1].length + 1 < len) {
-      len = dp[i - 1].length + 1;
-      calc = [i, ...dp[i - 1]];
-    }
-
-    dp[i] = calc;
+      if (now - 1 > 0 && !dp[now - 1][0]) {
+        newNows.push(now - 1);
+        dp[now - 1][0] = nowCount + 1;
+        dp[now - 1][1] = now;
+      }
+    });
+    nows = newNows;
   }
 
-  return `${dp[N].length - 1}\n${dp[N].join(' ')}`;
+  let now = 1;
+  const reuslt = [1];
+  for (let i = 0; i < dp[1][0]; i++) {
+    now = dp[now][1];
+    reuslt.push(now);
+  }
+
+  return [dp[1][0], reuslt.reverse().join(' ')].join('\n');
 }
 
 console.log(solution(N));
