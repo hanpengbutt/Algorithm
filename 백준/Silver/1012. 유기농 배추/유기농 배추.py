@@ -1,47 +1,48 @@
-import sys
-from collections import deque
+import collections
 
-input = sys.stdin.readline
-matrix = []
-visited = []
-N = 0
-M = 0
-vector = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+T = int(input())
 
 
-def bfs(row, col):
-    q = deque()
-    q.append([row, col])
-    visited[row][col] = 1
-    while q:
-        now_row, now_col = q.popleft()
-        for dr, dc in vector:
-            next_row = now_row + dr
-            next_col = now_col + dc
-            if -1 < next_row < N and -1 < next_col < M and matrix[next_row][next_col] and not visited[next_row][
-                next_col]:
-                q.append([next_row, next_col])
-                visited[next_row][next_col] = 1
+def solution(M, N, K, cabbages):
+    result = 0
+    matrix = [[0 for _ in range(M)] for _ in range(N)]
+    visited = [[0 for _ in range(M)] for _ in range(N)]
+    vector = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
+    for cabbage in cabbages:
+        [col, row] = cabbage
+        matrix[row][col] = 1
 
-def solution():
-    global matrix, visited, N, M
-    M, N, K = map(int, input().split())
-    matrix = [[0] * M for _ in range(N)]
-    for _ in range(K):
-        X, Y = map(int, input().split())
-        matrix[Y][X] = 1
-    visited = [[0] * M for _ in range(N)]
-    count = 0
+    def bfs(startRow, startCol):
+        queue = collections.deque([[startRow, startCol]])
+        visited[startRow][startCol] = 1
+
+        while len(queue):
+            [row, col] = queue.popleft()
+            for [dr, dc] in vector:
+                nextRow = row + dr
+                nextCol = col + dc
+                if (
+                    -1 < nextRow < N
+                    and -1 < nextCol < M
+                    and matrix[nextRow][nextCol]
+                    and not visited[nextRow][nextCol]
+                ):
+                    queue.append([nextRow, nextCol])
+                    visited[nextRow][nextCol] = 1
 
     for row in range(N):
         for col in range(M):
             if matrix[row][col] and not visited[row][col]:
                 bfs(row, col)
-                count += 1
+                result += 1
 
-    return count
+    return result
 
 
-for _ in range(int(input())):
-    print(solution())
+for _ in range(T):
+    [M, N, K] = map(int, input().split())
+    cabbages = []
+    for _ in range(K):
+        cabbages.append(map(int, input().split()))
+    print(solution(M, N, K, cabbages))
